@@ -16,6 +16,8 @@ import { DealBadge, DealScoreMeter } from "@/components/DealBadge";
 import { BrokerOffers } from "@/components/BrokerOffers";
 import { WatchlistButton } from "@/components/WatchlistButton";
 import { PriceAlert } from "@/components/PriceAlert";
+import { ShareButton } from "@/components/ShareButton";
+import { VenueMap } from "@/components/VenueMap";
 
 export default function EventDetailPage({
   params,
@@ -137,6 +139,8 @@ export default function EventDetailPage({
 
           <BrokerOffers data={data} />
 
+          <VenueMap category={event.category} />
+
           {/* Score explainer */}
           {dealScore != null && dealLabel && (
             <div className="card space-y-3 p-5">
@@ -183,7 +187,10 @@ export default function EventDetailPage({
                 Buy on {data.bestOffer.brokerName}
               </a>
             )}
-            <WatchlistButton event={watched} variant="full" />
+            <div className="grid grid-cols-2 gap-2">
+              <WatchlistButton event={watched} variant="full" />
+              <ShareButton title={event.name} text={`Check out ${event.name} on SeatScout`} />
+            </div>
             <PriceAlert
               eventId={event.id}
               eventName={event.name}

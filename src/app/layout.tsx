@@ -4,9 +4,25 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://elangetsfaced.vercel.app",
+  ),
   title: "SeatScout — Find the best ticket deals",
   description:
     "Compare live event ticket prices across brokers and find the best deals on sports, concerts, comedy and theater. Powered by the Ticketmaster Discovery API.",
+  openGraph: {
+    title: "SeatScout — Find the best ticket deals",
+    description:
+      "Compare live ticket prices across brokers, with transparent deal scores, a watchlist and price alerts.",
+    type: "website",
+    siteName: "SeatScout",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SeatScout — Find the best ticket deals",
+    description:
+      "Compare live ticket prices across brokers, with transparent deal scores and price alerts.",
+  },
 };
 
 // Set the theme before paint to avoid a flash of the wrong color scheme.
