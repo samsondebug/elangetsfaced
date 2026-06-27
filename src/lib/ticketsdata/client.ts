@@ -149,6 +149,94 @@ export async function fetchListings(
   };
 }
 
+/** One marketplace's URL for the same real-world event. */
+export interface TdMatch {
+  platform: TdPlatform;
+  eventUrl: string;
+}
+
+const isPlatform = (s: string): s is TdPlatform =>
+  (TD_PLATFORMS as readonly string[]).includes(s);
+
+/** Parse the /match response into platform→URL pairs, tolerant of shape. */
+function parseMatches(body: unknown): TdMatch[] {
+  // Shape A: { ticketmaster: "url", stubhub: "url", ... }
+  if (body && typeof body === "object" && !Array.isArray(body)) {
+    const b = body as Record<string, unknown>;
+    const nested =
+      (Array.isArray(b.matches) && b.matches) ||
+      (Array.isArray(b.results) && b.results) ||
+      null;
+    if (!nested) {
+      const out: TdMatch[] = [];
+      for (const [k, v] of Object.entries(b)) {
+        if (!isPlatform(k.toLowerCase())) continue;
+        const url =
+          typeof v === "string"
+            ? v
+            : v && typeof v === "object"
+              ? String((v as Record<string, unknown>).url ?? (v as Record<string, unknown>).event_url ?? "")
+              : "";
+        if (url) out.push({ platform: k.toLowerCase() as TdPlatform, eventUrl: url });
+      }
+      if (out.length) return out;
+    }
+  }
+  // Shape B: [ { platform, event_url } , ... ]
+  const arr: unknown[] = Array.isArray(body)
+    ? body
+    : body && typeof body === "object"
+      ? ((body as Record<string, unknown>).matches as unknown[]) ??
+        ((body as Record<string, unknown>).results as unknown[]) ??
+        []
+      : [];
+  return (arr ?? [])
+    .map((x): TdMatch | null => {
+      if (!x || typeof x !== "object") return null;
+      const r = x as Record<string, unknown>;
+      const platform = String(r.platform ?? r.marketplace ?? r.site ?? "").toLowerCase();
+      if (!isPlatform(platform)) return null;
+      const eventUrl =
+        typeof r.event_url === "string"
+          ? r.event_url
+          : typeof r.url === "string"
+            ? r.url
+            : "";
+      return eventUrl ? { platform: platform as TdPlatform, eventUrl } : null;
+    })
+    .filter((m): m is TdMatch => m != null);
+}
+
+/**
+ * Resolve the same event across marketplaces via TicketsData `/match`. We probe
+ * the documented identifiers (name + date, plus the canonical event URL) so the
+ * call works regardless of which the endpoint keys on. Returns [] on any error
+ * or unexpected shape — never throws.
+ */
+export async function matchEvent(opts: {
+  name: string;
+  date?: string | null;
+  eventUrl?: string;
+}): Promise<TdMatch[]> {
+  const c = creds();
+  if (!c) return [];
+  const url = new URL(`${BASE}/match`);
+  url.searchParams.set("username", c.username);
+  url.searchParams.set("password", c.password);
+  url.searchParams.set("keyword", opts.name);
+  url.searchParams.set("name", opts.name);
+  if (opts.date) url.searchParams.set("date", opts.date);
+  if (opts.eventUrl) url.searchParams.set("event_url", opts.eventUrl);
+  try {
+    const res = await fetch(url, { next: { revalidate: 120 } });
+    if (!res.ok) return [];
+    const data = (await res.json()) as { body?: unknown };
+    return parseMatches(data.body);
+  } catch {
+    return [];
+  }
+}
+
 export class TicketsDataError extends Error {
   constructor(
     message: string,
