@@ -6,7 +6,17 @@
 // own price "offers" for the same event, which is what powers cross-broker
 // comparison. There is no synthetic/mock data anywhere in this model.
 
-export type BrokerId = "ticketmaster" | "seatgeek";
+export type BrokerId =
+  | "ticketmaster"
+  | "seatgeek"
+  | "stubhub"
+  | "vividseats"
+  | "gametime"
+  | "tickpick"
+  | "viagogo"
+  | "dice"
+  | "eventbrite"
+  | "axs";
 
 export type EventCategory =
   | "sports"
@@ -78,6 +88,16 @@ export interface BrokerOffer {
   listingCount?: number | null;
 }
 
+/** A real seat-level listing from a marketplace (via TicketsData). */
+export interface TicketListing {
+  platform: BrokerId;
+  section: string;
+  row: string;
+  quantity: number;
+  price: number;
+  url: string | null;
+}
+
 export type DealLabel = "great" | "good" | "fair" | "high";
 
 /** An event plus every broker's offer plus computed deal signals. */
@@ -97,6 +117,11 @@ export interface AggregatedEvent {
   dealLabel: DealLabel | null;
   /** Plain-language explanation of how the score was derived (no black box). */
   dealReason: string | null;
+  /** Real seat-level listings (TicketsData), present on the detail view when
+   *  credentials are configured. Empty/undefined otherwise. */
+  liveListings?: TicketListing[];
+  /** TicketsData credits remaining after the last fetch, for visibility. */
+  quotaRemaining?: number | null;
 }
 
 export type SortKey = "deal" | "price-asc" | "price-desc" | "date";
