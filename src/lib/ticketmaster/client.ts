@@ -228,6 +228,10 @@ export async function searchEvents(p: SearchParams): Promise<SearchResult> {
     size: String(p.size ?? 40),
     page: String(p.page ?? 0),
     sort: p.sort ?? "date,asc",
+    // Drop placeholder events with no real date — they only have null prices and
+    // clutter a deals view.
+    includeTBA: "no",
+    includeTBD: "no",
   })) as TmEventsResponse;
 
   return {

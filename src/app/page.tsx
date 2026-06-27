@@ -79,7 +79,14 @@ export default function HomePage() {
           comedy and theater.
         </p>
         <div className="flex flex-wrap gap-2 pt-1 text-sm">
-          <Stat icon={<Ticket size={15} />} label={`${data?.totalElements ?? "—"} events`} />
+          <Stat
+            icon={<Ticket size={15} />}
+            label={
+              loading
+                ? "Loading events…"
+                : `${events.filter((e) => e.minPrice != null).length} with live prices`
+            }
+          />
           <Stat
             icon={<Zap size={15} />}
             label={`${(data?.liveBrokers ?? []).length || 1} live broker${
