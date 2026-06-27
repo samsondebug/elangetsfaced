@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 import { Header } from "@/components/Header";
 
@@ -34,12 +35,25 @@ export default function RootLayout({
         <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-6 sm:px-6">
           {children}
         </main>
-        <footer className="border-t border-slate-200 py-8 text-center text-xs text-slate-500 dark:border-slate-800">
-          <p>
-            SeatScout aggregates live data from the Ticketmaster Discovery API.
-            Prices and availability are provided by the brokers and may change at
-            checkout.
-          </p>
+        <footer className="border-t border-slate-200 py-8 dark:border-slate-800">
+          <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 text-center text-xs text-slate-500">
+            <nav className="flex items-center gap-4 font-medium">
+              <Link href="/" className="hover:text-brand-600">
+                Search
+              </Link>
+              <Link href="/watchlist" className="hover:text-brand-600">
+                Watchlist
+              </Link>
+              <Link href="/about" className="hover:text-brand-600">
+                About
+              </Link>
+            </nav>
+            <p className="max-w-2xl">
+              SeatScout aggregates live data from the Ticketmaster Discovery API.
+              Prices and availability are provided by the brokers and may change
+              at checkout.
+            </p>
+          </div>
         </footer>
       </body>
     </html>

@@ -6,6 +6,7 @@ import type { AggregatedEvent, EventsResponse, SearchFilters } from "@/lib/types
 import { EventCard, EventCardSkeleton } from "@/components/EventCard";
 import { SearchFilters as SearchFiltersBar } from "@/components/SearchFilters";
 import { DealOfTheDay } from "@/components/DealOfTheDay";
+import { HowItWorks } from "@/components/HowItWorks";
 
 const DEFAULT_FILTERS: SearchFilters = {
   query: "",
@@ -122,6 +123,8 @@ export default function HomePage() {
           </Grid>
         )}
       </section>
+
+      <HowItWorks />
     </div>
   );
 }
