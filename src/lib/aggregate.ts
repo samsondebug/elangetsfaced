@@ -130,5 +130,12 @@ export function refine(
     default:
       sorted.sort((a, b) => dateOf(a) - dateOf(b));
   }
-  return sorted;
+
+  // For a deals app, events with no purchasable price are noise — keep them
+  // (Discovery often omits prices) but always float priced/available events to
+  // the top, preserving the chosen sort within each group.
+  return [
+    ...sorted.filter((e) => e.minPrice != null),
+    ...sorted.filter((e) => e.minPrice == null),
+  ];
 }
