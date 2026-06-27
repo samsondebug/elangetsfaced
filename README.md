@@ -127,6 +127,27 @@ The detail page always shows the reason behind the score.
 
 ---
 
+## 🔌 TicketsData (all-marketplace real-time listings)
+
+For real **seat-level inventory and resale pricing across 10 marketplaces**
+(Ticketmaster, StubHub, SeatGeek, Vivid Seats, Gametime, TickPick, Viagogo,
+Dice, Eventbrite, AXS) in one normalized API, SeatScout integrates
+[TicketsData](https://ticketsdata.com/docs).
+
+Set credentials and the event **detail page** shows live listings (section, row,
+quantity, price), cheapest-first, with the get-in flagged:
+
+```bash
+# .env
+TICKETSDATA_USERNAME=your_account_email
+TICKETSDATA_PASSWORD=your_account_password
+```
+
+Credits are consumed per fetch, so listings are pulled **on demand** (detail
+view), not for the whole grid. With no credentials set it's a clean no-op and
+the app stays on the free Ticketmaster feed. Expanding live listings to every
+marketplace is wired through the same path via TicketsData's `/match` endpoint.
+
 ## 🛣️ Roadmap
 
 - Real cross-broker resale inventory via partner APIs (StubHub, Vivid Seats,

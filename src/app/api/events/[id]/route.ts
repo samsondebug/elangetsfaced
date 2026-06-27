@@ -5,6 +5,7 @@ import {
   TicketmasterApiError,
   TicketmasterConfigError,
 } from "@/lib/ticketmaster/client";
+import { enrichWithLiveListings } from "@/lib/ticketsdata/enrich";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,10 @@ export async function GET(
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
     const [aggregated] = await aggregateEvents([event]);
-    return NextResponse.json(aggregated);
+    // Upgrade the detail view with real seat-level inventory when TicketsData
+    // credentials are configured (no-op otherwise).
+    const enriched = await enrichWithLiveListings(aggregated);
+    return NextResponse.json(enriched);
   } catch (err) {
     if (err instanceof TicketmasterConfigError) {
       return NextResponse.json({ error: err.message }, { status: 503 });

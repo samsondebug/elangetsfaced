@@ -18,6 +18,7 @@ import { WatchlistButton } from "@/components/WatchlistButton";
 import { PriceAlert } from "@/components/PriceAlert";
 import { ShareButton } from "@/components/ShareButton";
 import { VenueMap } from "@/components/VenueMap";
+import { LiveListings } from "@/components/LiveListings";
 
 export default function EventDetailPage({
   params,
@@ -138,6 +139,14 @@ export default function EventDetailPage({
           </div>
 
           <BrokerOffers data={data} />
+
+          {data.liveListings && data.liveListings.length > 0 && (
+            <LiveListings
+              listings={data.liveListings}
+              currency={event.currency}
+              quotaRemaining={data.quotaRemaining}
+            />
+          )}
 
           <VenueMap category={event.category} />
 
