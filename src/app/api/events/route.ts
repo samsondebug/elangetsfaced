@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { aggregateEvents, refine } from "@/lib/aggregate";
+import { withAffiliateLinks } from "@/lib/affiliate";
 import { liveBrokerIds } from "@/lib/brokers";
 import {
   searchEvents,
@@ -51,7 +52,7 @@ export async function GET(req: Request) {
     });
 
     const aggregated = await aggregateEvents(result.events);
-    const events = refine(aggregated, { maxPrice, sort });
+    const events = refine(aggregated, { maxPrice, sort }).map(withAffiliateLinks);
 
     const body: EventsResponse = {
       events,

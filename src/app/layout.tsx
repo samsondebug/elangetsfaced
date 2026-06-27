@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { affiliateEnabled } from "@/lib/affiliate";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -69,6 +70,12 @@ export default function RootLayout({
               Prices and availability are provided by the brokers and may change
               at checkout.
             </p>
+            {affiliateEnabled() && (
+              <p className="max-w-2xl text-slate-400">
+                Some links are affiliate links — SeatScout may earn a commission
+                on purchases, at no extra cost to you.
+              </p>
+            )}
           </div>
         </footer>
       </body>
