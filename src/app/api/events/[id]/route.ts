@@ -6,6 +6,7 @@ import {
   TicketmasterConfigError,
 } from "@/lib/ticketmaster/client";
 import { enrichWithLiveListings } from "@/lib/ticketsdata/enrich";
+import { withAffiliateLinks } from "@/lib/affiliate";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET(
     // Upgrade the detail view with real seat-level inventory when TicketsData
     // credentials are configured (no-op otherwise).
     const enriched = await enrichWithLiveListings(aggregated);
-    return NextResponse.json(enriched);
+    return NextResponse.json(withAffiliateLinks(enriched));
   } catch (err) {
     if (err instanceof TicketmasterConfigError) {
       return NextResponse.json({ error: err.message }, { status: 503 });
